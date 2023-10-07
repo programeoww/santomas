@@ -15,7 +15,7 @@ function Header() {
         <header className="bg-blue-600 px-6 py-5 text-white flex items-center">
           <div className="space-x-5 flex items-center">
             <List className="text-2xl cursor-pointer" onClick={() => setIsDrawerOpen(!isDrawerOpen)} />
-            <Link href="/"><h1 className="text-xl font-semibold">SATOMAS Viet Nam</h1></Link>
+            <Link href="/"><h1 className="text-xl font-semibold">SANTOMAS Viet Nam</h1></Link>
             <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(!isDrawerOpen)} direction="left" className="text-neutral-800 text-lg" duration={250}>
               <ul className="py-5">
                 {

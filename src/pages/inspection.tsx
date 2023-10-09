@@ -74,13 +74,17 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
         (async () => {
             const { data: { data: assemblyLinesData } } = await instance.get(`/lines`);
             setAssemblyLines(assemblyLinesData);
-            const defaultLineExist = assemblyLinesData.find((assemblyLine: ILineWithRelationship) => {
-                return assemblyLine.name === defaultLine
-            })
-            if(defaultLine && defaultLineExist) {
-                setCurrentAssemblyLine(defaultLineExist);
-            }else if(!defaultLineExist && assemblyLinesData.length > 0) {
-                setNoData(true);
+            if(defaultLine){
+                const defaultLineExist = assemblyLinesData.find((assemblyLine: ILineWithRelationship) => {
+                    return assemblyLine.name === defaultLine
+                })
+                if(defaultLine && defaultLineExist) {
+                    setCurrentAssemblyLine(defaultLineExist);
+                }else if(!defaultLineExist && assemblyLinesData.length > 0) {
+                    setNoData(true);
+                }
+            }else{
+                setCurrentAssemblyLine(assemblyLinesData[0]);
             }
 
             if(assemblyLinesData.length === 0) {

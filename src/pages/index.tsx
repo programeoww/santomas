@@ -42,7 +42,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   const assemblyLines = await Line.findAll({
     where: {
         status: {
-            [Op.or]: ["PENDING", "OFF"]
+            [Op.or]: ["PENDING", "OFF", "ON"]
         }
     },
     include: [

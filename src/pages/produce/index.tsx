@@ -65,7 +65,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
 function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, workersRaw: string }) {
     const router = useRouter();
-    const { id } = router.query;
+    const { initID } = router.query;
     const [currentAssemblyLine, setCurrentAssemblyLine] = useState<ILine>();
     const [assemblyLines, setAssemblyLines] = useState<ILine[]>([]);
     const products = useMemo<IProduct[]>(() => JSON.parse(productsRaw), [productsRaw]);
@@ -77,27 +77,27 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
     const onSubmit = async (data: ILine) => {
         data.finish = currentAssemblyLine!.finish || 0;
         data.status = "ON";
-        data.manager_id = session.data!.user.id;
+        // data.manager_id = session.data!.user.id;
         data.name = assemblyLines.find(assemblyLine => assemblyLine.id === data.id)?.name || "";
 
-        await instance.put<ILine>(`/lines/${id}`, data);
+        await instance.put<ILine>(`/lines/${data.id}`, data);
         toast.success("Cập nhật dây chuyền thành công");
-        router.push(`/produce/${id}/start`);
+        router.push(`/produce/${data.id}/start`);
     }
 
     useEffect(() => {
         (async () => {
             const { data: { data } } = await instance.get("/lines?status=OFF");
             setAssemblyLines(data);
-            if(!id) {
+            if(!initID) {
                 const { data: { data: assemblyLineData } } = await instance.get(`/lines/${data[0].id}`);
                 setCurrentAssemblyLine(assemblyLineData);
             }else{
-                const { data: { data: assemblyLineData } } = await instance.get(`/lines/${id}`);
+                const { data: { data: assemblyLineData } } = await instance.get(`/lines/${initID}`);
                 setCurrentAssemblyLine(assemblyLineData);
             }
         })();
-    }, [id]);
+    }, [initID]);
 
     useEffect(() => {
         if (currentAssemblyLine) {

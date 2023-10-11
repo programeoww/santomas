@@ -41,7 +41,6 @@ function PageAssemblyLineNew() {
         if(session.data && session.data.user){
             data.finish = 0;
             data.status = "OFF";
-            data.startAt = moment().toISOString();
             data.manager_id = session.data.user.id
 
             await instance.post<ILine>("/lines", data);

@@ -3,6 +3,7 @@ import instance from "@/instance";
 import ILine from "@/interfaces/line";
 import IProduct from "@/interfaces/product";
 import IUser from "@/interfaces/user";
+import moment from "moment";
 import { GetServerSidePropsContext } from "next";
 import { getSession, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
@@ -79,6 +80,7 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
         data.status = "ON";
         // data.manager_id = session.data!.user.id;
         data.name = assemblyLines.find(assemblyLine => assemblyLine.id === data.id)?.name || "";
+        data.startAt = moment().local().toISOString();
 
         await instance.put<ILine>(`/lines/${data.id}`, data);
         toast.success("Cập nhật dây chuyền thành công");

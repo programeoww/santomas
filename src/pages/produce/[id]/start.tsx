@@ -13,7 +13,9 @@ import instance from "@/instance";
 import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { Line, LineWorker } from "../../../../models";
+import { useGlobalContext } from "@/pages/_app";
 
+const CreatableSelect = dynamic(() => import('react-select/creatable'), { ssr: false });
 const Select = dynamic(() => import('react-select'), { ssr: false });
 
 
@@ -92,48 +94,56 @@ function PageProduce() {
     const router = useRouter()
     const { id } = router.query;
     const [currentAssemblyLine, setCurrentAssemblyLine] = useState<ILineWithRelationship>();
-    const [assemblyLines, setAssemblyLines] = useState<ILineWithRelationship[]>([]);
+    // const [assemblyLines, setAssemblyLines] = useState<ILineWithRelationship[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const { control, setValue } = useForm<ILine>();
-    const watcher = useWatch({
-        control,
-        name: "note",
-    });
+    // const watcher = useWatch({
+    //     control,
+    //     name: "note",
+    // });
+    const { setIsWorking, setCurrentLine } = useGlobalContext()
 
-    useEffect(() => {
-        (async () => {
-            if(currentAssemblyLine) {
-                const data = {
-                    ...currentAssemblyLine,
-                    note: watcher,
-                }
+    // useEffect(() => {
+    //     (async () => {
+    //         if(currentAssemblyLine) {
+    //             const data = {
+    //                 ...currentAssemblyLine,
+    //             }
     
-                const uploadData = { ...data } as Partial<ILineWithRelationship>
+    //             const uploadData = { ...data } as Partial<ILineWithRelationship>
                 
-                delete uploadData.product;
-                delete uploadData.workers;
+    //             delete uploadData.product;
+    //             delete uploadData.workers;
     
-                instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
-            }
-        })()
+    //             await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+    //         }
+    //     })()
 
-    }, [currentAssemblyLine, watcher]);
+    // }, [currentAssemblyLine]);
 
     useEffect(() => {
         (async () => {
             if(!id) return;
             const assembly_line = id;
-            const { data: { data: assemblyLinesData } } = await instance.get(`/lines`);
-            setAssemblyLines(assemblyLinesData);
-            if(assembly_line) {
-                setCurrentAssemblyLine(assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line)));
-                setValue('note', assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line))?.note);
-            }else{
-                setCurrentAssemblyLine(assemblyLinesData[0]);
-                setValue('note', assemblyLinesData[0].note);
-            }
+            const { data: { data: assemblyLinesData } } = await instance.get(`/lines/${assembly_line}`);
+            setCurrentAssemblyLine(assemblyLinesData);
+            setValue('note', assemblyLinesData.note);
+            setCurrentLine(assemblyLinesData)
+
+            // const { data: { data: assemblyLinesData } } = await instance.get(`/lines`);
+            // setAssemblyLines(assemblyLinesData);
+            // if(assembly_line) {
+            //     setCurrentAssemblyLine(assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line)));
+            //     setValue('note', assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line))?.note);
+            //     setCurrentLine(assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line)))
+            // }else{
+            //     setCurrentAssemblyLine(assemblyLinesData[0]);
+            //     setValue('note', assemblyLinesData[0].note);
+            //     setCurrentLine(assemblyLinesData[0])
+            // }
         })();
-    }, [id, setValue]);
+        setIsWorking(true);
+    }, [id, setValue, setIsWorking, setCurrentLine]);
 
     const updateAssemblyLine = async (quantity: number, is_manual = false) => {
         const data = {
@@ -149,6 +159,23 @@ function PageProduce() {
         await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
         setIsOpen(false);
         setCurrentAssemblyLine((data as ILineWithRelationship));
+    }
+
+    const updateNote = async (note: string[]) => {
+        const data = {
+            ...currentAssemblyLine,
+            note: note,
+        }
+
+        const uploadData = { ...data }
+
+        delete uploadData.product;
+        delete uploadData.user;
+
+        await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+        setIsOpen(false);
+        setCurrentAssemblyLine((data as ILineWithRelationship));
+        setValue('note', note);
     }
 
     const endAssemblyLine = async () => {
@@ -172,7 +199,7 @@ function PageProduce() {
         }
     }
 
-    return (
+    return currentAssemblyLine && (
         <div className="shadow-lg p-8 border max-w-7xl mx-auto">
             <h1 className="text-center text-4xl font-bold mb-12">Bảng hiện thị số lượng sản phẩm lắp ráp</h1>
             <div className="flex flex-wrap -m-5 items-stretch">
@@ -187,10 +214,10 @@ function PageProduce() {
                         defaultValue={currentAssemblyLine}
                         placeholder="Chọn dây chuyền"
                         noOptionsMessage={() => "Không có dây chuyền nào"}
-                        options={ assemblyLines }
+                        options={ [currentAssemblyLine] }
                         getOptionValue={(option) => (option as ILineWithRelationship).id.toString()}
                         getOptionLabel={(option) => (option as ILineWithRelationship).name}
-                        value={assemblyLines.find(assemblyLine => assemblyLine.id === currentAssemblyLine?.id)}
+                        value={[currentAssemblyLine].find(assemblyLine => assemblyLine?.id === currentAssemblyLine?.id)}
                         onChange={(newValue) => currentAssemblyLine?.id !== (newValue as ILineWithRelationship).id && router.push(`/produce/${(newValue as ILineWithRelationship).id}`)}
                     />
                 </div>
@@ -208,12 +235,13 @@ function PageProduce() {
                 </div>
                 <div className="w-full p-5">
                     <div className="p-2 rounded px-4 border border-neutral-300">
-                        <p className="text-xl mb-2 font-medium">Note</p>
+                        <p className="text-xl mb-2 font-medium">Ghi chú</p>
                         <Controller
                             control={control}
                             name="note"
-                            render={({ field: { onChange, value, name } }) => (
-                                <Select
+                            render={({ field: { value, name } }) => (
+                                <CreatableSelect
+                                    formatCreateLabel={(inputValue) => `Thêm ghi chú "${inputValue}"`}
                                     isClearable
                                     name={name}
                                     placeholder="Ghi chú"
@@ -221,7 +249,7 @@ function PageProduce() {
                                     isMulti
                                     options={ JSON.parse(currentAssemblyLine?.product.note || '[]')?.map((item: string) => ({ value: item, label: item })) }
                                     value={ value?.map((item : string) => ({ value: item, label: item })) }
-                                    onChange={(newValue) => onChange((newValue as { value: string, label: string }[]).map((item) => item.value))}
+                                    onChange={(newValue) => updateNote((newValue as { value: string, label: string }[]).map((item) => item.value))}
                                 />
                             )}
                         />
@@ -261,7 +289,6 @@ function PageProduce() {
                 </div>
                 <div className="p-5 w-full">
                     <div className="flex justify-center space-x-5">
-                        <button type="button" onClick={() => router.push('/')} className="bg-gray-500 w-1/4 hover:bg-gray-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium">Quay lại</button>
                         <button onClick={endAssemblyLine} className="bg-red-500 w-1/4 hover:bg-red-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium">Kết thúc dây chuyền</button>
                     </div>
                 </div>

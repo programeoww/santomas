@@ -9,8 +9,9 @@ import { Op } from "sequelize"
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import getStatusColor from "@/utils/getStatusColor"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import getFinishPercent from "@/utils/getFinishPercent"
+import instance from "@/instance"
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context)
@@ -67,9 +68,15 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 }
 
 export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
-  const assemblyLines = useMemo<ILine[]>(() => JSON.parse(assemblyLinesRaw), [assemblyLinesRaw]);
+  const [assemblyLines, setAssemblyLines] = useState<ILine[]>(JSON.parse(assemblyLinesRaw));
 
-  // console.log(assemblyLines);
+  useEffect(() => {
+    const interval = setInterval(async () => {
+        const { data: { data: assemblyLinesData } } = await instance.get("/lines");
+        setAssemblyLines(assemblyLinesData);
+    }, 3000);
+    return () => clearInterval(interval);
+}, [assemblyLines]);
 
   return assemblyLines.length > 0 ? (
     <>

@@ -119,7 +119,7 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
                             defaultValue={currentAssemblyLine}
                             placeholder="Chọn dây chuyền"
                             noOptionsMessage={() => "Không có dây chuyền nào"}
-                            options={ assemblyLines }
+                            options={ [currentAssemblyLine] }
                             getOptionValue={(option) => (option as ILineWithRelationship).id.toString()}
                             getOptionLabel={(option) => (option as ILineWithRelationship).name}
                             value={assemblyLines.find(assemblyLine => assemblyLine.id === currentAssemblyLine.id)}
@@ -178,8 +178,14 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
                     </div>
                     <div className="p-5 w-1/2 border-t-2">
                         <div className="flex items-center rounded p-2">
-                            <p className="text-xl leading-8 w-1/2">Thời gian bắt đầu:</p>
-                            <p className="text-2xl text-center py-2 px-3 border border-neutral-300 rounded font-medium w-1/2">{moment(currentAssemblyLine.status === "OFF" ? undefined : currentAssemblyLine.createdAt).format("HH:mm:ss DD-MM-YYYY")}</p>
+                            {
+                                currentAssemblyLine.status !== "OFF" && (
+                                    <>
+                                        <p className="text-xl leading-8 w-1/2">Thời gian bắt đầu:</p>
+                                        <p className="text-2xl text-center py-2 px-3 border border-neutral-300 rounded font-medium w-1/2">{moment(currentAssemblyLine.createdAt).format("HH:mm:ss DD-MM-YYYY")}</p>
+                                    </>
+                                )
+                            }
                         </div>
                     </div>
                     <div className="p-5 w-1/2 border-t-2">

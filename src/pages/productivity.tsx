@@ -82,9 +82,8 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
             header: "Ngày",
             cell: ({ row }) => <p className="text-sm">{moment(row.original.createdAt).format("DD-MM-YYYY")}</p>
           }),
-          columnHelper.accessor("line", {
+          columnHelper.accessor("line.name", {
             header: "Dây chuyền",
-            cell: ({ row }) => <Link className='text-blue-500' href={`/lines/${row.original.line.id}`}>{row.original.line.name}</Link>,
           }),
           columnHelper.accessor("start_time", {
             header: "Giờ bắt đầu",

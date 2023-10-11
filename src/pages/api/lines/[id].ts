@@ -46,6 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             req.body.product_id = null
             req.body.shift = null
             req.body.finish = 0
+            req.body.note = []
 
             //delete all worker
             await LineWorker.destroy({
@@ -54,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             })
         }
+
         req.body.note = JSON.stringify(req.body.note)
 
         const AssemblyLine = await Line.update(req.body, {

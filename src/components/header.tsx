@@ -1,4 +1,7 @@
+import instance from "@/instance";
+import { useGlobalContext } from "@/pages/_app";
 import { Menu, Transition } from "@headlessui/react";
+import moment from "moment";
 import { signOut, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -10,6 +13,30 @@ const Drawer = dynamic(import("react-modern-drawer"), { ssr: false });
 function Header() {
     const session = useSession();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const { isWorking, currentLine } = useGlobalContext()
+
+    const handleSignOut = async () => {
+        if(isWorking) {
+          if(confirm("Bạn có chắc chắn muốn kết thúc dây chuyền này?")) {
+            const data = {
+                ...currentLine,
+                endAt: moment().local().toISOString(true),
+                status: "OFF",
+                is_end: true,
+                finish: Number(currentLine?.finish),
+            }
+    
+            const uploadData = { ...data }
+            
+            delete uploadData.product;
+    
+            await instance.put(`/lines/${data.id}`, uploadData);
+            signOut()
+          }
+        }else{
+          signOut()
+        }
+    }
 
     return session && session.data && session.data.user && (
         <header className="bg-blue-600 px-6 py-5 text-white flex items-center">
@@ -32,7 +59,7 @@ function Header() {
                     </>
                    )
                 } 
-                { (session.data.user.role === "worker" || session.data.user.role === "admin" || session.data.user.role === "manager") && <li><Link onClick={()=>setIsDrawerOpen(false)} className={'px-5 py-2 block hover:bg-neutral-100 duration-150'} href="/">Giám sát online</Link></li>}
+                { (session.data.user.role === "admin" || session.data.user.role === "manager") && <li><Link onClick={()=>setIsDrawerOpen(false)} className={'px-5 py-2 block hover:bg-neutral-100 duration-150'} href="/">Giám sát online</Link></li>}
               </ul>
             </Drawer>
           </div>
@@ -52,7 +79,7 @@ function Header() {
               <Menu.Items className="absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="px-1 py-1 ">
                   <Menu.Item>
-                    <button onClick={()=>signOut()} className='hover:bg-blue-500 hover:text-white text-neutral-800 group flex w-full items-center rounded-md px-2 py-2 text-sm'>
+                    <button onClick={handleSignOut} className='hover:bg-blue-500 hover:text-white text-neutral-800 group flex w-full items-center rounded-md px-2 py-2 text-sm'>
                       Đăng xuất
                     </button>
                   </Menu.Item>

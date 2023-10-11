@@ -145,11 +145,11 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
         <div className="flex items-end mb-4">
           <div className="text-sm mr-4 w-full max-w-[170px]">
               <p className="mb-2">Từ ngày</p>
-              <DatePicker selected={dateFilter.startDate} onChange={(date)=>setDateFilter({startDate: date ? date : '', endDate: dateFilter.endDate})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
+              <DatePicker selected={dateFilter.startDate} onChange={(date)=>setDateFilter({startDate: date, endDate: dateFilter.endDate})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
           </div>
           <div className="text-sm mr-2 w-full max-w-[170px] before:content-['-'] before:absolute before:top-0 before:translate-y-1/2 before:-left-1 before:bottom-0 before:-translate-x-full relative">
               <p className="mb-2">Đến ngày</p>
-              <DatePicker selected={dateFilter.endDate} onChange={(date)=>setDateFilter({startDate: dateFilter.startDate, endDate: date ? date : ''})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
+              <DatePicker selected={dateFilter.endDate} onChange={(date)=>setDateFilter({startDate: dateFilter.startDate, endDate: date})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
           </div>
           <input
                 value={globalFilter ?? ''}

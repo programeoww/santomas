@@ -108,7 +108,7 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
           {
             id: "percent",
             header: "Tiến độ",
-            cell: ({ row }) => row.original.status === "OFF" ? getFinishPercent(row.original.finish, row.original.product.target) + "%" : '0%'
+            cell: ({ row }) => (getFinishPercent(row.original.finish, row.original.product.target) + "%")
           },
           columnHelper.accessor("worker_count", {
             header: "Số lượng công nhân",

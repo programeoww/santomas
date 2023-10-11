@@ -34,7 +34,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
     const users = await User.findOne({
         where: {
-            id: context.params?.id
+            id: context.params?.id,
         }
     })
 

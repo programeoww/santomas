@@ -68,7 +68,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     const products = await Product.findAll();
     const workers = await User.findAll({
         where: {
-            role: "worker"
+            role: "worker",
         }
     });
 

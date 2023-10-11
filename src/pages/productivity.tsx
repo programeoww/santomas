@@ -4,15 +4,15 @@ import ILine from "../interfaces/line";
 import IProduct from "../interfaces/product";
 import { createColumnHelper, ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
-import getStatusColor from "../utils/getStatusColor";
 import IUser from "../interfaces/user";
 import moment from "moment";
 import getFinishPercent from "../utils/getFinishPercent";
 import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 import {LineProduction} from "../../models";
-import Link from "next/link";
 import instance from "@/instance";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type ILineWithRelationship = ILine & {
     product: IProduct;
@@ -66,7 +66,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
 function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) {
     const [productionLogs, setProductionLogs] = useState<ILineWithRelationship[]>(JSON.parse(productionLogsRaw));
-    const [dateFilter, setDateFilter] = useState<{startDate: string, endDate: string}>({startDate: "", endDate: ""});
+    const [dateFilter, setDateFilter] = useState<{startDate: Date | null, endDate: Date | null}>({startDate: null, endDate: null});
     const [globalFilter, setGlobalFilter] = useState<string>();
 
     const columnHelper = useMemo(() => createColumnHelper<ILineWithRelationship>(), []);
@@ -124,7 +124,7 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
       );
 
     useEffect(() => {
-      if(dateFilter.startDate !== "" && dateFilter.endDate !== "")
+      if(dateFilter.startDate && dateFilter.endDate)
         (async () => {
             const { data: {data} } = await instance.get("/line-productions");
             const filteredData = data.filter((assemblyLine: ILineWithRelationship) => {
@@ -138,18 +138,18 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
             setProductionLogs(filteredData);
         })();
     }, [dateFilter])
-    
+
     return (
     <>
         <h1 className="text-center text-5xl font-bold mb-12">Báo cáo lắp ráp</h1>
         <div className="flex items-end mb-4">
           <div className="text-sm mr-4 w-full max-w-[170px]">
               <p className="mb-2">Từ ngày</p>
-              <input onChange={(e)=>setDateFilter({startDate: e.target.value, endDate: dateFilter.endDate})} type="date" className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholder="Nhập mã khách hàng"/>
+              <DatePicker selected={dateFilter.startDate} onChange={(date)=>setDateFilter({startDate: date ? date : '', endDate: dateFilter.endDate})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
           </div>
           <div className="text-sm mr-2 w-full max-w-[170px] before:content-['-'] before:absolute before:top-0 before:translate-y-1/2 before:-left-1 before:bottom-0 before:-translate-x-full relative">
               <p className="mb-2">Đến ngày</p>
-              <input onChange={(e)=>setDateFilter({startDate: dateFilter.startDate, endDate: e.target.value})} type="date" className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholder="Nhập số điện thoại"/>
+              <DatePicker selected={dateFilter.endDate} onChange={(date)=>setDateFilter({startDate: dateFilter.startDate, endDate: date ? date : ''})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
           </div>
           <input
                 value={globalFilter ?? ''}

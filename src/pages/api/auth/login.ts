@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const user = await User.findOne({
                 where: {
-                    username: req.body.username
+                    username: req.body.username,
                 }
             })
 

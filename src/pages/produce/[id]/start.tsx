@@ -101,7 +101,7 @@ function PageProduce() {
     //     control,
     //     name: "note",
     // });
-    const { setIsWorking, setCurrentLine } = useGlobalContext()
+    const { setIsWorking, setCurrentLine, isWorking } = useGlobalContext()
 
     // useEffect(() => {
     //     (async () => {
@@ -179,6 +179,7 @@ function PageProduce() {
     }
 
     const endAssemblyLine = async () => {
+        if(!isWorking) return;
         if(confirm("Bạn có chắc chắn muốn kết thúc dây chuyền này?")) {
             const data = {
                 ...currentAssemblyLine,
@@ -194,6 +195,8 @@ function PageProduce() {
             delete uploadData.user;
     
             await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+            setCurrentLine(undefined)
+            setIsWorking(false);
             toast.success("Kết thúc dây chuyền thành công");
             router.push('/');
         }

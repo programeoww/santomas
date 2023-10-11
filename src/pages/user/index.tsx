@@ -30,7 +30,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         }
       }
 
-    const users = await User.findAll();
+    const users = await User.findAll()
 
     return {
         props: { usersRaw: JSON.stringify(users) }

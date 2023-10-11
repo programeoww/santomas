@@ -5,7 +5,7 @@ import IProduct from "@/interfaces/product";
 import IUser from "@/interfaces/user";
 import moment from "moment";
 import { GetServerSidePropsContext } from "next";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useState, useEffect, useMemo } from "react";
@@ -52,7 +52,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     const products = await Product.findAll();
     const workers = await User.findAll({
         where: {
-            role: "worker"
+            role: "worker",
         }
     });
 
@@ -73,7 +73,6 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
     const workers = useMemo<IUser[]>(() => JSON.parse(workersRaw), [workersRaw]);
     const shifts = useMemo<ILine['shift'][]>(() => [ "MS","NS","AS","ALL" ], []);
     const { register, handleSubmit, formState: { errors }, watch, control, setValue } = useForm<ILine>();
-    const session = useSession();
 
     const onSubmit = async (data: ILine) => {
         data.finish = currentAssemblyLine!.finish || 0;

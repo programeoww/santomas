@@ -3,7 +3,7 @@ import {Product} from "../../models"
 import {User} from "../../models"
 import ILine from "@/interfaces/line"
 import { GetServerSidePropsContext } from "next"
-import { getSession } from "next-auth/react"
+import { getSession, useSession } from "next-auth/react"
 import Link from "next/link"
 import { Op } from "sequelize"
 import { CircularProgressbar } from 'react-circular-progressbar';
@@ -69,6 +69,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
 export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
   const [assemblyLines, setAssemblyLines] = useState<ILine[]>(JSON.parse(assemblyLinesRaw));
+  const session = useSession();
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -86,7 +87,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
               assemblyLines.map((assemblyLine, index) => (
                   <div className="p-5 w-1/4" key={index}>
                       <div className="bg-white h-full relative shadow-lg rounded-lg px-5 py-12 block hover:shadow-xl duration-150 border">
-                          <Link href={`/produce/${assemblyLine.id}`} className="">
+                          <Link href={session.data?.user.role !== "admin" ? `/produce/${assemblyLine.id}` : '#'} className="">
                               <div className="absolute top-4 left-0 -translate-x-3 text-xl bg-lime-600 text-white py-1.5 px-3 rounded">{assemblyLine.name}</div>
                               <div className="space-y-5 max-w-[250px] mx-auto">
                                   {

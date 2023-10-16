@@ -36,7 +36,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         }
     }
 
-    if(session.user.role !== "admin" && session.user.role !== "worker") {
+    if(session.user.role !== "worker") {
         return {
             redirect: {
                 destination: '/404',

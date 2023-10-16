@@ -103,6 +103,8 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
         return () => clearInterval(interval);
     }, [currentAssemblyLine]);
 
+    const session = useSession()
+
     if(currentTime && currentAssemblyLine){
         return (
             <div className="shadow-lg p-8 border max-w-7xl mx-auto">
@@ -119,7 +121,7 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
                             defaultValue={currentAssemblyLine}
                             placeholder="Chọn dây chuyền"
                             noOptionsMessage={() => "Không có dây chuyền nào"}
-                            options={ [currentAssemblyLine] }
+                            options={ session.data?.user.role === 'admin' ? assemblyLines : [currentAssemblyLine] }
                             getOptionValue={(option) => (option as ILineWithRelationship).id.toString()}
                             getOptionLabel={(option) => (option as ILineWithRelationship).name}
                             value={assemblyLines.find(assemblyLine => assemblyLine.id === currentAssemblyLine.id)}

@@ -24,7 +24,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       }
   }
 
-  if(session.user.role !== "admin" && session.user.role !== "worker") {
+  if(session.user.role !== "admin" && session.user.role !== "worker" && session.user.role !== "manager") {
     return {
         redirect: {
             destination: '/inspection',

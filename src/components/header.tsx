@@ -46,7 +46,7 @@ function Header() {
             <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(!isDrawerOpen)} direction="left" className="text-neutral-800 text-lg" duration={250}>
               <ul className="py-5">
                 {
-                  (session.data.user.role === "tivi" || session.data.user.role === "admin" || session.data.user.role === "manager") && <li><Link onClick={()=>setIsDrawerOpen(false)} className={'px-5 py-2 block hover:bg-neutral-100 duration-150'} href="/inspection">Giám sát</Link></li>
+                  (session.data.user.role === "tivi" || session.data.user.role === "admin") && <li><Link onClick={()=>setIsDrawerOpen(false)} className={'px-5 py-2 block hover:bg-neutral-100 duration-150'} href="/inspection">Giám sát</Link></li>
                 }
                 {
                   session.data.user.role === "admin" &&

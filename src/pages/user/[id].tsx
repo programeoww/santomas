@@ -96,7 +96,7 @@ function PageUserEdit({ usersRaw }: { usersRaw: string }) {
                         <select {...register('role', {required: 'Trường này không được để trống'})} className="bg-gray-50 border border-gray-300 sm: rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5">
                             <option value="admin">Admin</option>
                             <option value="worker">Worker</option>
-                            <option value="manager">Manager</option>
+                            <option value="manager">Giám sát Online</option>
                             <option value="tivi">Tivi</option>
                         </select>
                         {errors.role && <span className="text-red-500  mt-2">{errors.role.message}</span>}

@@ -70,6 +70,7 @@ function PageUser({ usersRaw }: { usersRaw: string }) {
             }),
             columnHelper.accessor("role", {
                 header: "Vai trò",
+                cell: ({ cell }) => cell.getValue() === "manager" ? "giám sát online" : cell.getValue()
             }),
             {
                 id: "action",

@@ -49,7 +49,7 @@ function PageAssemblyLineList({ assemblyLinesRaw }: { assemblyLinesRaw: string }
 
     const handleRemove = useMemo(() => async (id: number | string) => 
         {
-            if(!window.confirm("Bạn có chắc chắn muốn xóa dây chuyền này?")) return;
+            if(!window.confirm("Bạn có chắc chắn muốn xóa dây chuyền này? Các dữ liệu sản xuất cũng sẽ bị xoá theo")) return;
             try {
                 await instance.delete(`/lines/${id}`);
                 setAssemblyLines(assemblyLines.filter(assemblyLine => assemblyLine.id !== id));

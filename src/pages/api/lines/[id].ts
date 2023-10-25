@@ -121,6 +121,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
     } else if(req.method === 'DELETE'){
         try{
+            await LineProduction.destroy({
+                where: {
+                    line_id: req.query.id
+                }
+            })
+
             const AssemblyLine = await Line.destroy({
                 where: {
                     id: req.query.id

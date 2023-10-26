@@ -107,6 +107,7 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
         (async () => {
             const { data: { data } } = await instance.get("/lines?status=OFF");
             setAssemblyLines(data);
+            if(data.length === 0) return;
             if(!id) {
                 const { data: { data: assemblyLineData } } = await instance.get(`/lines/${data[0].id}`);
                 setCurrentAssemblyLine(assemblyLineData);

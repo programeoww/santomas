@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import instance from "@/instance";
 import { GetServerSidePropsContext } from "next";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { Line, LineWorker } from "../../../../models";
 import { useGlobalContext } from "@/pages/_app";
 
@@ -97,6 +97,7 @@ function PageProduce() {
     // const [assemblyLines, setAssemblyLines] = useState<ILineWithRelationship[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const { control, setValue } = useForm<ILine>();
+    const { data: session } = useSession();
     // const watcher = useWatch({
     //     control,
     //     name: "note",
@@ -187,6 +188,7 @@ function PageProduce() {
                 status: "OFF",
                 is_end: true,
                 finish: Number(currentAssemblyLine?.finish),
+                manager_id: session?.user.id
             }
     
             const uploadData = { ...data }

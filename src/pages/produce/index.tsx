@@ -90,6 +90,7 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
         (async () => {
             const { data: { data } } = await instance.get("/lines?status=OFF");
             setAssemblyLines(data);
+            if(data.length === 0) return;
             if(!initID) {
                 const { data: { data: assemblyLineData } } = await instance.get(`/lines/${data[0].id}`);
                 setCurrentAssemblyLine(assemblyLineData);
@@ -109,7 +110,7 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
         }
     }, [currentAssemblyLine, setValue]);
 
-    return products.length > 0 && currentAssemblyLine &&(
+    return products.length > 0 && currentAssemblyLine && assemblyLines.length > 0 ? (
         <>
             <div className="max-w-3xl mx-auto flex items-center justify-center">
                 <div className="bg-white shadow-md border border-gray-200 w-full rounded-lg sm:p-6 lg:p-8">
@@ -206,7 +207,11 @@ function PageProductDetail({ productsRaw, workersRaw }: { productsRaw: string, w
                 </div>
             </div>
         </>
-    );
+    ): (
+        <div className="flex items-center justify-center h-screen">
+            <h1 className="text-center text-4xl font-bold mb-12">Không có dữ liệu</h1>
+        </div>
+    )
 }
 
 export default PageProductDetail;

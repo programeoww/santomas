@@ -24,6 +24,7 @@ function Header() {
                 status: "OFF",
                 is_end: true,
                 finish: Number(currentLine?.finish),
+                manager_id: session.data?.user.id
             }
     
             const uploadData = { ...data }

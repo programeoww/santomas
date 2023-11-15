@@ -184,7 +184,7 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
                                 currentAssemblyLine.status !== "OFF" && (
                                     <>
                                         <p className="text-xl leading-8 w-1/2">Thời gian bắt đầu:</p>
-                                        <p className="text-2xl text-center py-2 px-3 border border-neutral-300 rounded font-medium w-1/2">{moment(currentAssemblyLine.createdAt).format("HH:mm:ss DD-MM-YYYY")}</p>
+                                        <p className="text-2xl text-center py-2 px-3 border border-neutral-300 rounded font-medium w-1/2">{moment(currentAssemblyLine.startAt).format("HH:mm:ss DD-MM-YYYY")}</p>
                                     </>
                                 )
                             }

@@ -12,6 +12,7 @@ import getStatusColor from "@/utils/getStatusColor"
 import { useEffect, useMemo, useState } from "react"
 import getFinishPercent from "@/utils/getFinishPercent"
 import instance from "@/instance"
+import moment from "moment"
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const session = await getSession(context)
@@ -103,6 +104,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                               <div className="">
                                   <p className="text-2xl">Sản phẩm: <span className="font-bold">{assemblyLine.product?.name || "Chưa có sản phẩm"}</span></p>
                                   <p className="mt-2">Trạng thái: <span style={{color: getStatusColor(assemblyLine.status)}} className="font-bold">{assemblyLine.status}</span></p>
+                                  <p className="mt-2">Sản lượng cần đạt được: <span className="font-bold">{moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!}</span></p>
                               </div>
                               <div className="flex items-center space-x-3">
                               </div>

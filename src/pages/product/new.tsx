@@ -60,6 +60,11 @@ function PageProductNew() {
                         {errors.name && <span className="text-red-500  mt-2">{errors.name.message}</span>}
                     </div>
                     <div>
+                        <label htmlFor="cycle_time" className="font-medium block mb-2">Cycle time lắp ráp (s) <span className="text-red-500">*</span></label>
+                        <input {...register('cycle_time', {required: 'Trường này không được để trống'})} placeholder="100" type="number" className="bg-gray-50 border border-gray-300 sm: rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5" />
+                        {errors.cycle_time && <span className="text-red-500  mt-2">{errors.cycle_time.message}</span>}
+                    </div>
+                    <div>
                         <label htmlFor="target" className="font-medium block mb-2">Mục tiêu sản phẩm <span className="text-red-500">*</span></label>
                         <input {...register('target', {required: 'Trường này không được để trống'})} placeholder="1000" type="number" className="bg-gray-50 border border-gray-300 sm: rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5" />
                         {errors.target && <span className="text-red-500  mt-2">{errors.target.message}</span>}

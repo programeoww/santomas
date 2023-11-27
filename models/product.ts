@@ -9,6 +9,7 @@ class Product extends Model<InferAttributes<Product>, InferCreationAttributes<Pr
 
   declare id: CreationOptional<number>;
   declare name: string;
+  declare cycle_time: number;
   declare target: string;
   declare key_QR: string;
   declare pac: number;
@@ -45,6 +46,7 @@ const ProductModel = (sequelize: Sequelize) => {
       primaryKey: true
     },
     name: DataTypes.STRING,
+    cycle_time: DataTypes.NUMBER,
     target: DataTypes.STRING,
     key_QR: DataTypes.STRING,
     pac: DataTypes.NUMBER,

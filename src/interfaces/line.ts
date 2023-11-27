@@ -13,6 +13,8 @@ export default interface ILine {
     endAt: string
     end_time: string
     start_time: string
+    rest_time_start: string
+    rest_time_end: string
     status: "PENDING" | "OFF" | "CANCELED" | "ON" | "ARCHIVED",
     workers?: IUser[]
     note?: string[]

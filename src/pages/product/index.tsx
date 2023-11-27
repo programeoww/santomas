@@ -67,6 +67,9 @@ function PageProduct({ productsRaw }: { productsRaw: string }) {
                 header: "Tên sản phẩm",
                 cell: ({ row }) => <Link className='text-blue-500' href={`/product/${row.original.id}`}>{row.original.name}</Link>,
             }),
+            columnHelper.accessor("cycle_time", {
+                header: "Cycle time lắp ráp (s)",
+            }),
             columnHelper.accessor("target", {
                 header: "Mục tiêu / ca",
             }),

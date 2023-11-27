@@ -102,6 +102,7 @@ function PageProduce() {
     //     control,
     //     name: "note",
     // });
+    const [isRest, setIsRest] = useState(false);
     const { setIsWorking, setCurrentLine, isWorking } = useGlobalContext()
 
     // useEffect(() => {
@@ -204,6 +205,39 @@ function PageProduce() {
         }
     }
 
+    const handleRest = async () => {
+        if(isRest) {
+            const data = {
+                ...currentAssemblyLine,
+                rest_time_end: moment().format("YYYY-MM-DD HH:mm:ss"),
+            }
+
+            const uploadData = { ...data }
+
+            delete uploadData.product;
+            delete uploadData.user;
+
+            await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+            setIsRest(false);
+        }else{
+            if(confirm("Bạn có chắc chắn muốn tạm dừng dây chuyền này?")) {
+                const data = {
+                    ...currentAssemblyLine,
+                    rest_time_start: moment().format("YYYY-MM-DD HH:mm:ss"),
+                }
+    
+                const uploadData = { ...data }
+    
+                delete uploadData.product;
+                delete uploadData.user;
+    
+                await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+
+                setIsRest(true);
+            }
+        }
+    }
+
     return currentAssemblyLine && (
         <div className="shadow-lg p-8 border max-w-7xl mx-auto">
             <h1 className="text-center text-4xl font-bold mb-12">Bảng hiện thị số lượng sản phẩm lắp ráp</h1>
@@ -278,22 +312,27 @@ function PageProduce() {
                         <p className="text-2xl text-center py-2 border border-neutral-300 rounded font-medium w-1/2">{Number(currentAssemblyLine?.product.target) - Number(currentAssemblyLine?.finish) < 0 ? 0 : Number(currentAssemblyLine?.product.target) - Number(currentAssemblyLine?.finish) || 0}</p>
                     </div>
                 </div>
-                <div className="p-5 w-1/3 flex flex-col justify-between uppercase">
-                    <div className="p-2">
-                        <button onClick={()=>updateAssemblyLine(1)} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+1 PCS</button>
-                    </div>
-                    <div className="p-2">
-                        <button onClick={()=>updateAssemblyLine(Number(currentAssemblyLine?.product.pac))} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+ PAC</button>
-                    </div>
-                    <div className="p-2">
-                        <button onClick={()=>updateAssemblyLine(Number(currentAssemblyLine?.product.box))} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+ BOX</button>
-                    </div>
-                    <div className="p-2">
-                        <button onClick={()=>setIsOpen(true)} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">Nhập tay</button>
-                    </div>
-                </div>
+                {
+                    !isRest ? (
+                        <div className="p-5 w-1/3 flex flex-col justify-between uppercase">
+                            <div className="p-2">
+                                <button onClick={()=>updateAssemblyLine(1)} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+1 PCS</button>
+                            </div>
+                            <div className="p-2">
+                                <button onClick={()=>updateAssemblyLine(Number(currentAssemblyLine?.product.pac))} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+ PAC</button>
+                            </div>
+                            <div className="p-2">
+                                <button onClick={()=>updateAssemblyLine(Number(currentAssemblyLine?.product.box))} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">+ BOX</button>
+                            </div>
+                            <div className="p-2">
+                                <button onClick={()=>setIsOpen(true)} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium w-full">Nhập tay</button>
+                            </div>
+                        </div>
+                    ) : null
+                }
                 <div className="p-5 w-full">
                     <div className="flex justify-center space-x-5">
+                        <button onClick={()=>handleRest()} className="bg-blue-500 hover:bg-blue-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium">{isRest ? "Tiếp tục" : "Tạm dừng"}</button>
                         <button onClick={endAssemblyLine} className="bg-red-500 w-1/4 hover:bg-red-600 duration-150 text-white rounded px-4 py-2.5 text-xl font-medium">Kết thúc dây chuyền</button>
                     </div>
                 </div>

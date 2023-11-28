@@ -13,6 +13,7 @@ import {LineProduction} from "../../models";
 import instance from "@/instance";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ExcelDownloader from "@/components/ExcelDownloader";
 
 type ILineWithRelationship = ILine & {
     product: IProduct;
@@ -68,6 +69,7 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
     const [productionLogs, setProductionLogs] = useState<ILineWithRelationship[]>(JSON.parse(productionLogsRaw));
     const [dateFilter, setDateFilter] = useState<{startDate: Date | null, endDate: Date | null}>({startDate: null, endDate: null});
     const [globalFilter, setGlobalFilter] = useState<string>();
+    const columnNames: string[] = Object.keys(productionLogs[0] ?? [])  
 
     const columnHelper = useMemo(() => createColumnHelper<ILineWithRelationship>(), []);
 
@@ -152,11 +154,19 @@ function PageProductivity({ productionLogsRaw }: { productionLogsRaw: string }) 
               <DatePicker selected={dateFilter.endDate} onChange={(date)=>setDateFilter({startDate: dateFilter.startDate, endDate: date})} className="border w-full placeholder:text-sm border-solid border-outline_variant rounded px-3 py-2.5" placeholderText="Tất cả"/>
           </div>
           <input
-                value={globalFilter ?? ''}
-                onChange={e => setGlobalFilter(e.currentTarget.value)}
-                className="p-2 shadow border rounded outline-none ml-auto block"
-                placeholder="Tìm kiếm sản phẩm..."
-              />
+            value={globalFilter ?? ''}
+            onChange={e => setGlobalFilter(e.currentTarget.value)}
+            className="p-2 shadow border rounded outline-none ml-2 block"
+            placeholder="Tìm kiếm sản phẩm..."
+          />
+          <button onClick={()=>ExcelDownloader(productionLogs, 'export', columnNames)} className="text-[#20744A] flex ml-auto py-2 shrink-0 px-5 bg-[#20744A] bg-opacity-[0.11] rounded text-sm font-semibold hover:bg-opacity-30 duration-75 items-center mr-2">
+              <svg className={'text-[#20744A] mr-2'} width={24} height={24} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fillRule="evenodd" clipRule="evenodd" d="M21.5858 3.30374H13.9882V1.51349L1.5 3.44099V20.3362L13.9882 22.4872V19.8337H21.5858C21.8158 19.8454 22.0412 19.7655 22.2125 19.6114C22.3839 19.4574 22.4872 19.2418 22.5 19.0117V4.12499C22.487 3.89509 22.3836 3.67966 22.2123 3.52578C22.041 3.37191 21.8157 3.29208 21.5858 3.30374ZM21.7057 19.1482H13.9628L13.95 17.7315H15.8153V16.0815H13.9357L13.9268 15.1065H15.8153V13.4565H13.9125L13.9035 12.4815H15.8153V10.8315H13.8975V9.85649H15.8153V8.20649H13.8975V7.23149H15.8153V5.58149H13.8975V4.08149H21.7057V19.1482Z" fill="currentColor" />
+                  <path d="M16.8652 5.57925H20.1075V7.22925H16.8652V5.57925ZM16.8652 8.205H20.1075V9.855H16.8652V8.205ZM16.8652 10.8308H20.1075V12.4808H16.8652V10.8308ZM16.8652 13.4565H20.1075V15.1065H16.8652V13.4565ZM16.8652 16.0823H20.1075V17.7323H16.8652V16.0823Z" fill="currentColor" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M4.76025 8.00476L6.36975 7.91251L7.3815 10.6943L8.577 7.79776L10.1865 7.70551L8.232 11.655L10.1865 15.6143L8.48475 15.4995L7.33575 12.4815L6.186 15.3848L4.62225 15.2468L6.43875 11.7495L4.76025 8.00476Z" fill="white" />
+              </svg>
+              <span>Export excel</span>
+          </button>
         </div>
         <Table columns={columns} data={productionLogs} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
     </>

@@ -41,7 +41,9 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     }
   }
 
-  const assemblyLines = await Line.findAll({
+  const data: (ILine & {target: number})[] = []
+
+  const assemblyLines = (await Line.findAll({
     where: {
         status: {
             [Op.or]: ["PENDING", "OFF", "ON"]
@@ -59,22 +61,32 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         foreignKey: "product_id"
       }
     ]
+  })).map((assemblyLine) => {
+    // @ts-ignore
+    data.push(assemblyLine.dataValues)
+  })
+
+  data.map((assemblyLine) => {
+    assemblyLine.target = moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!
   })
 
   return {
       props: {
-        assemblyLinesRaw: JSON.stringify(assemblyLines)
+        assemblyLinesRaw: JSON.stringify(data)
       }
   }
 }
 
 export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
-  const [assemblyLines, setAssemblyLines] = useState<ILine[]>(JSON.parse(assemblyLinesRaw));
+  const [assemblyLines, setAssemblyLines] = useState<(ILine & {target: number})[]>(JSON.parse(assemblyLinesRaw));
   const session = useSession();
 
   useEffect(() => {
     const interval = setInterval(async () => {
         const { data: { data: assemblyLinesData } } = await instance.get("/lines");
+        assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
+            assemblyLine.target = moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!
+        })
         setAssemblyLines(assemblyLinesData);
     }, 3000);
     return () => clearInterval(interval);
@@ -104,7 +116,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                               <div className="">
                                   <p className="text-2xl">Sản phẩm: <span className="font-bold">{assemblyLine.product?.name || "Chưa có sản phẩm"}</span></p>
                                   <p className="mt-2">Trạng thái: <span style={{color: getStatusColor(assemblyLine.status)}} className="font-bold">{assemblyLine.status}</span></p>
-                                  <p className="mt-2">Sản lượng cần đạt được: <span className="font-bold">{moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!}</span></p>
+                                  <p className="mt-2">Sản lượng cần đạt được: <span className="font-bold">{assemblyLine.target}</span></p>
                               </div>
                               <div className="flex items-center space-x-3">
                               </div>

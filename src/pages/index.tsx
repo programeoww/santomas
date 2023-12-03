@@ -67,7 +67,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   })
 
   data.map((assemblyLine) => {
-    assemblyLine.target = moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!
+    assemblyLine.target = Math.floor((moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix())) / assemblyLine.product?.cycle_time!)
   })
 
   return {
@@ -85,7 +85,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
     const interval = setInterval(async () => {
         const { data: { data: assemblyLinesData } } = await instance.get("/lines");
         assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
-            assemblyLine.target = moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix()) / assemblyLine.product?.cycle_time!
+            assemblyLine.target = Math.floor((moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix())) / assemblyLine.product?.cycle_time!)
         })
         setAssemblyLines(assemblyLinesData);
     }, 3000);

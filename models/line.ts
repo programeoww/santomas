@@ -16,6 +16,8 @@ class Line extends Model<InferAttributes<Line>, InferCreationAttributes<Line>> {
   declare startAt: Date;
   declare manager_id: ForeignKey<number>;
   declare product_id: ForeignKey<number>;
+  declare rest_time_start: string;
+  declare rest_time_end: string;
   declare note: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -60,6 +62,8 @@ const LineModel = (sequelize: Sequelize) => {
     status: DataTypes.ENUM("PENDING", "OFF", "CANCELED", "ON", "ARCHIVED"),
     endAt: DataTypes.DATE,
     startAt: DataTypes.DATE,
+    rest_time_start: DataTypes.STRING,
+    rest_time_end: DataTypes.STRING,
     manager_id: DataTypes.INTEGER,
     product_id: DataTypes.INTEGER,
     note: DataTypes.STRING,

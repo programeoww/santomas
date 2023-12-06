@@ -18,8 +18,6 @@ class LineProduction extends Model<InferAttributes<LineProduction>, InferCreatio
   declare finish: number;
   declare worker_count: number;
   declare manager_id: ForeignKey<number>;
-  declare rest_time_start: string;
-  declare rest_time_end: string;
   declare note: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
@@ -85,8 +83,6 @@ const LineProductionModel = (sequelize: Sequelize) => {
       onDelete: 'SET NULL',
       onUpdate: 'CASCADE'
     },
-    rest_time_start: DataTypes.STRING,
-    rest_time_end: DataTypes.STRING,
     note: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,

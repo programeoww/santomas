@@ -67,7 +67,17 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   })
 
   data.map((assemblyLine) => {
-    assemblyLine.target = Math.floor((moment().unix() - moment(assemblyLine.startAt).unix() - (moment(assemblyLine.rest_time_end).unix() - moment(assemblyLine.rest_time_start).unix())) / assemblyLine.product?.cycle_time!)
+    const restTime = moment(assemblyLine.rest_time_end).diff(moment(assemblyLine.rest_time_start), 'seconds')
+          assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds') - restTime) / assemblyLine.product?.cycle_time!)
+          if(!assemblyLine.rest_time_start && !assemblyLine.rest_time_end) {
+            assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+          }
+          if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
+            assemblyLine.target = 0
+          }
+          if((assemblyLine.rest_time_start && !assemblyLine.rest_time_end)){
+            assemblyLine.target = Math.floor((moment(assemblyLine.rest_time_start).diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+          }
   })
 
   return {
@@ -104,6 +114,16 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
     return () => clearInterval(interval);
 }, [assemblyLines]);
 
+  const getProgressColor = (finish: number, target: number) => {
+    if(finish < target) {
+      return 'rgb(199, 40, 40)'
+    }else if(finish == target) {
+      return 'rgb(59, 130, 246)'
+    }else {
+      return 'rgb(160, 85, 247)'
+    }
+  }
+
   return assemblyLines.length > 0 ? (
     <>
       <h1 className="text-center text-5xl font-bold mb-12">Giám sát online</h1>
@@ -120,9 +140,9 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                               <div className="space-y-5 max-w-[250px] mx-auto">
                                   {
                                       assemblyLine.status === "ON" ? (
-                                          <CircularProgressbar styles={{path:{stroke: `rgb(59, 130, 246)`}, text: {fill: 'rgb(59, 130, 246)'},}} className="duration-150" value={Number(assemblyLine.finish) * 100 / Number(assemblyLine.product?.target) || 0} text={getFinishPercent(assemblyLine.finish, assemblyLine.product?.target || 0) + "%"} />
+                                          <CircularProgressbar styles={{path:{stroke: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)}, text: {fill: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)},}} className="duration-150" value={Number(assemblyLine.finish) * 100 / Number(assemblyLine.product?.target) || 0} text={getFinishPercent(assemblyLine.finish, assemblyLine.product?.target || 0) + "%"} />
                                       ):
-                                      <CircularProgressbar styles={{path:{stroke: `rgb(59, 130, 246)`}, text: {fill: 'rgb(59, 130, 246)'},}} className="duration-150" value={0} text={"0%"} />
+                                      <CircularProgressbar styles={{path:{stroke: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)}, text: {fill: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)},}} className="duration-150" value={0} text={"0%"} />
                                   }
                                   <p className="text-4xl font-bold text-center">{assemblyLine.finish} / {assemblyLine.product?.target || 0}</p>
                               </div>

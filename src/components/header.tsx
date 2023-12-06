@@ -23,6 +23,8 @@ function Header() {
                 endAt: moment().local().toISOString(true),
                 status: "OFF",
                 is_end: true,
+                rest_time_start: null,
+                rest_time_end: null,
                 finish: Number(currentLine?.finish),
                 manager_id: session.data?.user.id
             }

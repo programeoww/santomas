@@ -87,12 +87,16 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
           return {data: {data: []}}
         });
         assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
-            const restTime = (moment(assemblyLine.rest_time_end || 0).unix() - moment(assemblyLine.rest_time_start || 0).unix()) < 0 ? 0 : (moment(assemblyLine.rest_time_end || 0).unix() - moment(assemblyLine.rest_time_start || 0).unix())
-            assemblyLine.target = Math.floor((moment().unix() - moment(assemblyLine.startAt).unix() - restTime) / assemblyLine.product?.cycle_time!)
-            if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
-              assemblyLine.target = 0
-            }
-          })
+          const restTime = moment(assemblyLine.rest_time_end).diff(moment(assemblyLine.rest_time_start), 'seconds')
+          assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds') - restTime) / assemblyLine.product?.cycle_time!)
+
+          if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
+            assemblyLine.target = 0
+          }
+          if((assemblyLine.rest_time_start && !assemblyLine.rest_time_end)){
+            assemblyLine.target = Math.floor((moment(assemblyLine.rest_time_start).diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+          }
+        })
         setAssemblyLines(assemblyLinesData);
     }, 3000);
     return () => clearInterval(interval);

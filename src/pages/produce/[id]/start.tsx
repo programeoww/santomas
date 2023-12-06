@@ -188,6 +188,8 @@ function PageProduce() {
                 endAt: moment().local().toISOString(true),
                 status: "OFF",
                 is_end: true,
+                rest_time_start: null,
+                rest_time_end: null,
                 finish: Number(currentAssemblyLine?.finish),
                 manager_id: session?.user.id
             }
@@ -218,12 +220,14 @@ function PageProduce() {
             delete uploadData.user;
 
             await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
+            setCurrentAssemblyLine((data as ILineWithRelationship));
             setIsRest(false);
         }else{
             if(confirm("Bạn có chắc chắn muốn tạm dừng dây chuyền này?")) {
                 const data = {
                     ...currentAssemblyLine,
                     rest_time_start: moment().format("YYYY-MM-DD HH:mm:ss"),
+                    rest_time_end: "",
                 }
     
                 const uploadData = { ...data }
@@ -232,7 +236,7 @@ function PageProduce() {
                 delete uploadData.user;
     
                 await instance.put<ILineWithRelationship>(`/lines/${data.id}`, uploadData);
-
+                setCurrentAssemblyLine((data as ILineWithRelationship));
                 setIsRest(true);
             }
         }

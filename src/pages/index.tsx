@@ -135,7 +135,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                           <Link href={session.data?.user.role !== "admin" ? `/produce/${assemblyLine.id}` : '#'} className="">
                               <div className="absolute top-4 left-0 -translate-x-3 text-xl bg-lime-600 text-white py-1.5 px-3 rounded">{assemblyLine.name}</div>
                               {
-                                assemblyLine.status === "ON" && <h1 className="my-4">Tiến độ: <span className="text-red-500">{Number(assemblyLine.finish) < assemblyLine.target ? 'Chưa đạt' : (Number(assemblyLine.finish) == assemblyLine.target ? 'Đạt' : 'Vượt tiến độ') } yêu cầu</span></h1>
+                                assemblyLine.status === "ON" && <h1 className="my-4">Tiến độ: <span style={{color: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)}}>{Number(assemblyLine.finish) < assemblyLine.target ? 'Chưa đạt' : (Number(assemblyLine.finish) == assemblyLine.target ? 'Đạt' : 'Vượt tiến độ') } yêu cầu</span></h1>
                               }
                               <div className="space-y-5 max-w-[250px] mx-auto">
                                   {

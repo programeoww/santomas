@@ -89,7 +89,9 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
         assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
           const restTime = moment(assemblyLine.rest_time_end).diff(moment(assemblyLine.rest_time_start), 'seconds')
           assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds') - restTime) / assemblyLine.product?.cycle_time!)
-
+          if(!assemblyLine.rest_time_start && !assemblyLine.rest_time_end) {
+            assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+          }
           if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
             assemblyLine.target = 0
           }

@@ -87,7 +87,7 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
           return {data: {data: []}}
         });
         assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
-            const restTime = (moment(assemblyLine.rest_time_end || undefined).unix() - moment(assemblyLine.rest_time_start || 0).unix()) < 0 ? 0 : (moment(assemblyLine.rest_time_end || undefined).unix() - moment(assemblyLine.rest_time_start || 0).unix())
+            const restTime = (moment(assemblyLine.rest_time_end || 0).unix() - moment(assemblyLine.rest_time_start || 0).unix()) < 0 ? 0 : (moment(assemblyLine.rest_time_end || 0).unix() - moment(assemblyLine.rest_time_start || 0).unix())
             assemblyLine.target = Math.floor((moment().unix() - moment(assemblyLine.startAt).unix() - restTime) / assemblyLine.product?.cycle_time!)
             if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
               assemblyLine.target = 0

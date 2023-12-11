@@ -1,9 +1,28 @@
 import * as XLSX from 'xlsx';
+import moment from 'moment';
+import getFinishPercent from '@/utils/getFinishPercent';
 
 export default function ExcelDownloader(data: any, fileName: string, heading: string[] = []) {
-    data.map((item: any) => {
-        delete item.search_query
+    heading = ["STT", "Ngày", "Dây chuyền","Giờ bắt đầu","Giờ kết thúc", "Sản phẩm", "Ca", "Mục tiêu", "Đã hoàn thành", "Tiến độ", "Số lượng công nhân", "PIC", "Ghi chú"]
+
+    data = data.map((item: { id: any; date: moment.MomentInput; line: { name: any; }; start_time: any; end_time: any; product: { name: any; target: any; }; shift: any; finish: any; worker_count: any; manager: { name: any; }; note: string; })=>{
+        return {
+            "STT": item.id,
+            "Ngày": moment(item.date).format("DD/MM/YYYY"),
+            "Dây chuyền": item.line.name,
+            "Giờ bắt đầu": item.start_time,
+            "Giờ kết thúc": item.end_time,
+            "Sản phẩm": item.product.name,
+            "Ca": item.shift,
+            "Mục tiêu": item.product.target,
+            "Đã hoàn thành": item.finish,
+            "Tiến độ": getFinishPercent(item.finish, item.product.target) + "%",
+            "Số lượng công nhân": item.worker_count,
+            "PIC": item.manager.name,
+            "Ghi chú": item.note && JSON.parse(item.note)?.length > 0 ? JSON.parse(item.note)?.join(", ") : "",
+        }
     })
+
     const currentDateTime = new Date().toISOString().slice(0, 19).replace(/-/g, "").replace(/:/g, "").replace("T", "_");
     const name = `${fileName || 'Output'}-${currentDateTime}.xlsx`;
     //@ts-ignore

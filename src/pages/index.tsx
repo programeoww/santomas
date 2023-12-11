@@ -150,7 +150,15 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                           <div className="flex border-t-2 mt-5 pt-5 justify-between">
                               <div className="">
                                   <p className="text-2xl">Sản phẩm: <span className="font-bold">{assemblyLine.product?.name || "Chưa có sản phẩm"}</span></p>
-                                  <p className="mt-2">Trạng thái: <span style={{color: getStatusColor(assemblyLine.status)}} className="font-bold">{assemblyLine.status}</span></p>
+                                  <p className="mt-2">Trạng thái: 
+                                    {
+                                      assemblyLine.rest_time_start && !assemblyLine.rest_time_end ? (
+                                        <span className="font-bold text-yellow-500">Tạm dừng</span>
+                                      ) : (
+                                        <span style={{color: getStatusColor(assemblyLine.status)}} className="font-bold">{assemblyLine.status}</span>
+                                      )
+                                    }
+                                  </p>
                                   <p className="mt-2">Sản lượng cần đạt được: <span className="font-bold">{assemblyLine.target}</span></p>
                               </div>
                               <div className="flex items-center space-x-3">

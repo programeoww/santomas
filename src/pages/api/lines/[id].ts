@@ -32,7 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 note: JSON.stringify(req.body.note),
                 date: moment(req.body.endAt).toDate(),
                 worker_count: WorkerCount,
-                finish: req.body.finish
+                finish: req.body.finish,
+                rest_time_start: req.body.rest_time_start,
+                rest_time_end: req.body.rest_time_end,
             })
 
             if(!SavedLog){

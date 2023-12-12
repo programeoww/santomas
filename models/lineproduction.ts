@@ -19,6 +19,8 @@ class LineProduction extends Model<InferAttributes<LineProduction>, InferCreatio
   declare worker_count: number;
   declare manager_id: ForeignKey<number>;
   declare note: string;
+  declare rest_time_start: string;
+  declare rest_time_end: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -84,6 +86,8 @@ const LineProductionModel = (sequelize: Sequelize) => {
       onUpdate: 'CASCADE'
     },
     note: DataTypes.STRING,
+    rest_time_start: DataTypes.STRING,
+    rest_time_end: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')

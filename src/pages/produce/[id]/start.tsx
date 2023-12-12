@@ -131,18 +131,7 @@ function PageProduce() {
             setCurrentAssemblyLine(assemblyLinesData);
             setValue('note', assemblyLinesData.note);
             setCurrentLine(assemblyLinesData)
-
-            // const { data: { data: assemblyLinesData } } = await instance.get(`/lines`);
-            // setAssemblyLines(assemblyLinesData);
-            // if(assembly_line) {
-            //     setCurrentAssemblyLine(assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line)));
-            //     setValue('note', assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line))?.note);
-            //     setCurrentLine(assemblyLinesData.find((assemblyLine: ILineWithRelationship) => assemblyLine.id === Number(assembly_line)))
-            // }else{
-            //     setCurrentAssemblyLine(assemblyLinesData[0]);
-            //     setValue('note', assemblyLinesData[0].note);
-            //     setCurrentLine(assemblyLinesData[0])
-            // }
+            setIsRest(assemblyLinesData.rest_time_start && !assemblyLinesData.rest_time_end);
         })();
         setIsWorking(true);
     }, [id, setValue, setIsWorking, setCurrentLine]);
@@ -188,8 +177,6 @@ function PageProduce() {
                 endAt: moment().local().toISOString(true),
                 status: "OFF",
                 is_end: true,
-                rest_time_start: null,
-                rest_time_end: null,
                 finish: Number(currentAssemblyLine?.finish),
                 manager_id: session?.user.id
             }

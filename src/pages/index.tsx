@@ -78,6 +78,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
           if((assemblyLine.rest_time_start && !assemblyLine.rest_time_end)){
             assemblyLine.target = Math.floor((moment(assemblyLine.rest_time_start).diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
           }
+          if(assemblyLine.target < 0) assemblyLine.target = 0
   })
 
   return {
@@ -108,6 +109,8 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
           if((assemblyLine.rest_time_start && !assemblyLine.rest_time_end)){
             assemblyLine.target = Math.floor((moment(assemblyLine.rest_time_start).diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
           }
+
+          if(assemblyLine.target < 0) assemblyLine.target = 0
         })
         setAssemblyLines(assemblyLinesData);
     }, 3000);

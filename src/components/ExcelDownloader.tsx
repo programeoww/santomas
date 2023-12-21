@@ -3,7 +3,7 @@ import moment from 'moment';
 import getFinishPercent from '@/utils/getFinishPercent';
 
 export default function ExcelDownloader(data: any, fileName: string, heading: string[] = []) {
-    heading = ["STT", "Ngày", "Dây chuyền","Giờ bắt đầu","Giờ kết thúc", "Giờ bắt đầu tạm dừng", "Giờ kết thúc tạm dừng", "Sản phẩm", "Ca", "Mục tiêu", "Đã hoàn thành", "Tiến độ", "Số lượng công nhân", "PIC", "Ghi chú", 'Đạt / Không đạt']
+    heading = ["STT", "Ngày", "Dây chuyền","Giờ bắt đầu","Giờ kết thúc", "Giờ bắt đầu tạm dừng", "Giờ kết thúc tạm dừng", "Tổng thời gian tạm dừng", "Sản phẩm", "Ca", "Mục tiêu", "Đã hoàn thành", "Tiến độ", "Số lượng công nhân", "PIC", "Ghi chú", 'Đạt / Không đạt']
 
     data = data.map((item: {
         rest_time_start: any;
@@ -17,6 +17,7 @@ export default function ExcelDownloader(data: any, fileName: string, heading: st
             "Giờ kết thúc": item.end_time,
             "Giờ bắt đầu tạm dừng": moment(item.rest_time_start).format("HH:mm:ss"),
             "Giờ kết thúc tạm dừng": moment(item.rest_time_end).format("HH:mm:ss"),
+            "Tổng thời gian tạm dừng": moment(item.rest_time_end).diff(moment(item.rest_time_start), 'minutes'),
             "Sản phẩm": item.product.name,
             "Ca": item.shift,
             "Mục tiêu": item.product.target,

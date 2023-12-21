@@ -148,12 +148,14 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                                       ):
                                       <CircularProgressbar styles={{path:{stroke: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)}, text: {fill: getProgressColor(Number(assemblyLine.finish), assemblyLine.target)},}} className="duration-150" value={0} text={"0%"} />
                                   }
-                                  <p className="text-4xl font-bold text-center">{assemblyLine.finish} / {assemblyLine.product?.target || 0}</p>
                               </div>
                           </Link>
                           <div className="flex border-t-2 mt-5 pt-5 justify-between">
                               <div className="">
+                                  <p className="text-2xl">Sản lượng thực tế: <span className="font-bold">{assemblyLine.finish} / {assemblyLine.product?.target || 0}</span></p>
+                                  <p className="text-2xl">Sản lượng yêu cầu: <span className="font-bold">{assemblyLine.product?.target || 0}</span></p>
                                   <p className="text-2xl">Sản phẩm: <span className="font-bold">{assemblyLine.product?.name || "Chưa có sản phẩm"}</span></p>
+                                  <p className="mt-2">Sản lượng mục tiêu cả ca: <span className="font-bold">{assemblyLine.target}</span></p>
                                   <p className="mt-2">Trạng thái: 
                                     {
                                       assemblyLine.rest_time_start && !assemblyLine.rest_time_end ? (
@@ -163,7 +165,6 @@ export default function Home({assemblyLinesRaw}: {assemblyLinesRaw: string}) {
                                       )
                                     }
                                   </p>
-                                  <p className="mt-2">Sản lượng cần đạt được: <span className="font-bold">{assemblyLine.target}</span></p>
                               </div>
                               <div className="flex items-center space-x-3">
                               </div>

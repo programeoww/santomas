@@ -46,7 +46,7 @@ const ProductModel = (sequelize: Sequelize) => {
       primaryKey: true
     },
     name: DataTypes.STRING,
-    cycle_time: DataTypes.NUMBER,
+    cycle_time: DataTypes.FLOAT,
     target: DataTypes.STRING,
     key_QR: DataTypes.STRING,
     pac: DataTypes.NUMBER,

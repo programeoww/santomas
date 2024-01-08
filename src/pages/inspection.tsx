@@ -1,12 +1,11 @@
 import ILine from "@/interfaces/line";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import IUser from "../interfaces/user";
 import IProduct from "../interfaces/product";
 import { CircularProgressbar } from "react-circular-progressbar";
 import moment from "moment";
 import getFinishPercent from "../utils/getFinishPercent";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
 import instance from "@/instance";
 import { getSession, useSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
@@ -18,6 +17,7 @@ type ILineWithRelationship = ILine & {
     product: IProduct;
     user: IUser;
     workerId: number[];
+    target: number;
 }
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
@@ -73,6 +73,21 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
     useEffect(() => {
         (async () => {
             const { data: { data: assemblyLinesData } } = await instance.get(`/lines`);
+            assemblyLinesData.map((assemblyLine: ILine & {target: number}) => {
+                const restTime = moment(assemblyLine.rest_time_end).diff(moment(assemblyLine.rest_time_start), 'seconds')
+                assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds') - restTime) / assemblyLine.product?.cycle_time!)
+                if(!assemblyLine.rest_time_start && !assemblyLine.rest_time_end) {
+                  assemblyLine.target = Math.floor((moment().diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+                }
+                if(!assemblyLine.startAt || assemblyLine.status !== "ON") {
+                  assemblyLine.target = 0
+                }
+                if((assemblyLine.rest_time_start && !assemblyLine.rest_time_end)){
+                  assemblyLine.target = Math.floor((moment(assemblyLine.rest_time_start).diff(moment(assemblyLine.startAt), 'seconds')) / assemblyLine.product?.cycle_time!)
+                }
+      
+                if(assemblyLine.target < 0) assemblyLine.target = 0
+            })
             setAssemblyLines(assemblyLinesData);
             if(defaultLine){
                 const defaultLineExist = assemblyLinesData.find((assemblyLine: ILineWithRelationship) => {
@@ -97,6 +112,19 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
         const interval = setInterval(async () => {
             if(currentAssemblyLine && currentAssemblyLine.status === "ON") {
                 const { data: { data: assemblyLineData } } = await instance.get(`/lines/${currentAssemblyLine.id}`);
+                const restTime = moment(assemblyLineData.rest_time_end).diff(moment(assemblyLineData.rest_time_start), 'seconds')
+                assemblyLineData.target = Math.floor((moment().diff(moment(assemblyLineData.startAt), 'seconds') - restTime) / assemblyLineData.product?.cycle_time!)
+                if(!assemblyLineData.rest_time_start && !assemblyLineData.rest_time_end) {
+                    assemblyLineData.target = Math.floor((moment().diff(moment(assemblyLineData.startAt), 'seconds')) / assemblyLineData.product?.cycle_time!)
+                }
+                if(!assemblyLineData.startAt || assemblyLineData.status !== "ON") {
+                    assemblyLineData.target = 0
+                }
+                if((assemblyLineData.rest_time_start && !assemblyLineData.rest_time_end)){
+                    assemblyLineData.target = Math.floor((moment(assemblyLineData.rest_time_start).diff(moment(assemblyLineData.startAt), 'seconds')) / assemblyLineData.product?.cycle_time!)
+                }
+        
+                if(assemblyLineData.target < 0) assemblyLineData.target = 0
                 setCurrentAssemblyLine(assemblyLineData);
             }
         }, 3000);
@@ -161,6 +189,10 @@ function PageInspection({ defaultLine }: { defaultLine: string }) {
                         <div className="flex items-center rounded p-2 space-x-10">
                             <p className="text-xl leading-8 w-1/2">Mục tiêu sản lượng:</p>
                             <p className="text-2xl text-center py-2 border border-neutral-300 rounded font-medium w-1/2">{currentAssemblyLine.product?.target ?? 0}</p>
+                        </div>
+                        <div className="flex items-center rounded p-2 space-x-10">
+                            <p className="text-xl leading-8 w-1/2">Sản lượng mục tiêu cả ca:</p>
+                            <p className="text-2xl text-center py-2 border border-neutral-300 rounded font-medium w-1/2">{currentAssemblyLine.target}</p>
                         </div>
                         <div className="flex items-center rounded p-2 space-x-10">
                             <p className="text-xl leading-8 w-1/2">Số lượng hiện tại:</p>

@@ -61,7 +61,7 @@ function PageProductNew() {
                     </div>
                     <div>
                         <label htmlFor="cycle_time" className="font-medium block mb-2">Cycle time lắp ráp (s) <span className="text-red-500">*</span></label>
-                        <input {...register('cycle_time', {required: 'Trường này không được để trống'})} placeholder="100" type="number" className="bg-gray-50 border border-gray-300 sm: rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5" />
+                        <input {...register('cycle_time', {required: 'Trường này không được để trống'})} step="0.1" placeholder="100" type="number" className="bg-gray-50 border border-gray-300 sm: rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-blue-500 block w-full p-2.5" />
                         {errors.cycle_time && <span className="text-red-500  mt-2">{errors.cycle_time.message}</span>}
                     </div>
                     <div>
